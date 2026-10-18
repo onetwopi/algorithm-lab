@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-x = np.linspace(0, 50, 500)
+x = np.linspace(0, 50, 300)
 y = np.sin(x) * np.exp(-x / 5)
 
 plt.plot(x, y)
