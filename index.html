@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5ef">
+  <meta name="description" content="Note G — explore computer science algorithms through interactive demonstrations, inspired by Ada Lovelace.">
+  <title>Note G — Algorithms, made visible</title>
+  <style>
+    :root {
+      --paper: #f7f5ef;
+      --paper-deep: #eeeadf;
+      --ink: #202a35;
+      --muted: #66717b;
+      --line: #dedbd1;
+      --accent: #286b61;
+      --accent-dark: #1b5049;
+      --coral: #c96f54;
+      --gold: #d4a64f;
+      --white: #fffefa;
+      --shadow: 0 14px 40px rgba(32,42,53,.07);
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.6; }
+    a { color: inherit; }
+    .site-header { position: sticky; top: 0; z-index: 10; background: rgba(247,245,239,.94); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(222,219,209,.9); }
+    .nav-wrap { width: min(1160px, calc(100% - 40px)); min-height: 76px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+    .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; flex-shrink: 0; }
+    .brand-mark { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px 12px 12px 3px; background: var(--accent); color: white; font-family: var(--serif); font-size: 25px; font-style: italic; box-shadow: 4px 4px 0 #d6dfd6; }
+    .brand-name { font-family: var(--serif); font-size: 25px; font-weight: 700; letter-spacing: -.7px; line-height: 1.05; }
+    .brand-sub { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; letter-spacing: 1.65px; text-transform: uppercase; font-weight: 700; }
+    .nav-links { display: flex; align-items: center; gap: 30px; }
+    .nav-links a { color: #4f5a64; text-decoration: none; font-size: 13px; font-weight: 650; transition: color .18s ease; }
+    .nav-links a:hover, .nav-links a:focus-visible { color: var(--accent); }
+    .nav-links .nav-cta { padding: 10px 15px; border: 1px solid #c9d4cd; border-radius: 8px; color: var(--accent-dark); }
+    .menu-toggle { display: none; border: 1px solid var(--line); background: var(--white); border-radius: 8px; padding: 8px 11px; color: var(--ink); font: inherit; }
+    .container { width: min(1160px, calc(100% - 40px)); margin: auto; }
+    .hero { padding: 78px 0 66px; overflow: hidden; }
+    .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 64px; align-items: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 24px; height: 2px; background: var(--coral); }
+    h1 { margin: 20px 0 20px; max-width: 650px; font: 500 clamp(48px, 6.2vw, 78px)/.99 var(--serif); letter-spacing: -3px; }
+    h1 em { color: var(--accent); font-weight: 500; }
+    .hero-copy { max-width: 560px; color: #5d6872; font-size: 17px; line-height: 1.8; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 29px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 12px 18px; border: 1px solid transparent; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 750; transition: transform .18s, background .18s; }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { background: var(--accent); color: white; box-shadow: 0 5px 0 var(--accent-dark); }
+    .button-primary:hover { background: var(--accent-dark); }
+    .button-secondary { border-color: var(--line); background: rgba(255,254,250,.6); color: var(--ink); }
+    .hero-note { margin-top: 22px; color: #7a827f; font-size: 12px; }
+    .hero-note strong { color: #4f5c59; }
+    .visual { position: relative; min-height: 370px; display: grid; place-items: center; }
+    .visual::before { content: ""; position: absolute; width: 330px; height: 330px; border: 1px solid #d8d7c9; border-radius: 50%; }
+    .visual::after { content: ""; position: absolute; width: 265px; height: 265px; border: 1px dashed #d8d7c9; border-radius: 50%; }
+    .algorithm-paper { position: relative; z-index: 1; width: min(100%, 365px); padding: 25px 26px 22px; background: var(--white); border: 1px solid #e4e0d6; border-radius: 5px; box-shadow: 9px 12px 0 rgba(40,107,97,.08), var(--shadow); transform: rotate(2deg); }
+    .paper-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 13px; border-bottom: 1px solid #ece9e1; color: #89918d; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; }
+    .paper-title { margin: 18px 0 5px; font: 22px var(--serif); }
+    .paper-subtitle { margin-bottom: 21px; color: var(--muted); font-size: 11px; }
+    .bars { height: 118px; display: flex; align-items: end; justify-content: center; gap: 8px; padding: 0 8px 11px; border-bottom: 1px solid #e5e2d9; }
+    .bar { width: 26px; border-radius: 4px 4px 0 0; background: #c8d8ce; position: relative; }
+    .bar:nth-child(2), .bar:nth-child(5) { background: var(--accent); }
+    .bar:nth-child(4) { background: #e7b5a0; }
+    .bar:nth-child(6) { background: var(--gold); }
+    .paper-code { display: flex; justify-content: space-between; gap: 8px; margin-top: 14px; color: #64736c; font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .floating-label { position: absolute; z-index: 2; padding: 8px 12px; background: var(--white); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 5px 15px #202a3510; font-size: 11px; font-weight: 750; }
+    .label-one { top: 31px; right: 0; transform: rotate(4deg); }
+    .label-two { bottom: 26px; left: 0; transform: rotate(-5deg); }
+    .label-dot { display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: var(--coral); }
+    .section-rule { border-top: 1px solid var(--line); }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); padding: 22px 0; border-bottom: 1px solid var(--line); }
+    .stat { padding: 0 24px; border-right: 1px solid var(--line); }
+    .stat:first-child { padding-left: 0; }
+    .stat:last-child { border: 0; }
+    .stat strong { display: block; font: 20px var(--serif); }
+    .stat span { color: var(--muted); font-size: 11px; }
+    .algorithms { padding: 76px 0 84px; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 29px; }
+    .section-kicker { color: var(--coral); font-size: 10px; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase; }
+    h2 { margin: 7px 0 0; font: 500 clamp(31px, 4vw, 44px)/1.12 var(--serif); letter-spacing: -1.1px; }
+    .section-intro { max-width: 390px; margin: 0; color: var(--muted); font-size: 13px; }
+    .toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 22px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 7px; }
+    .filter { padding: 8px 13px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: #647078; font: 650 11px var(--sans); cursor: pointer; }
+    .filter[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: white; }
+    .search-wrap { position: relative; }
+    .search-wrap span { position: absolute; top: 9px; left: 12px; color: #84908a; font-size: 15px; }
+    .search { width: 205px; padding: 10px 12px 10px 34px; border: 1px solid var(--line); border-radius: 8px; outline: none; background: var(--white); color: var(--ink); font: 12px var(--sans); }
+    .search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px #286b6118; }
+    .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
+    .algo-card { display: flex; flex-direction: column; min-height: 250px; padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,254,250,.74); transition: transform .2s, box-shadow .2s, border-color .2s; }
+    .algo-card:hover { transform: translateY(-4px); border-color: #c3d2c9; box-shadow: var(--shadow); }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .algo-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 11px; background: #e4eee7; color: var(--accent); font: 22px var(--serif); }
+    .algo-card:nth-child(3n+2) .algo-icon { background: #f6e8df; color: #a85840; }
+    .algo-card:nth-child(3n) .algo-icon { background: #f2ead7; color: #9a742d; }
+    .tag { padding: 4px 8px; border-radius: 999px; background: #efeee8; color: #6c766f; font-size: 9px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
+    .algo-card h3 { margin: 20px 0 7px; font: 23px var(--serif); letter-spacing: -.3px; }
+    .algo-card p { margin: 0 0 20px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .card-link { display: inline-flex; align-items: center; gap: 7px; margin-top: auto; color: var(--accent); font-size: 12px; font-weight: 800; text-decoration: none; }
+    .card-link:hover { color: var(--accent-dark); }
+    .empty-state { display: none; padding: 32px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); text-align: center; }
+    .quote-band { padding: 43px 0; background: #e9eee7; border-top: 1px solid #dce4da; border-bottom: 1px solid #dce4da; }
+    .quote-inner { display: grid; grid-template-columns: 60px 1fr auto; gap: 24px; align-items: center; }
+    .quote-mark { color: var(--accent); font: 76px/.8 var(--serif); }
+    blockquote { margin: 0; max-width: 760px; font: italic 22px/1.4 var(--serif); }
+    .quote-caption { margin-top: 9px; color: #6e7b72; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .quote-stamp { width: 86px; height: 86px; display: grid; place-items: center; border: 1px solid #b7c7b8; border-radius: 50%; color: var(--accent); font: 12px/1.2 var(--serif); text-align: center; transform: rotate(10deg); }
+    .about { padding: 76px 0; }
+    .about-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: 70px; align-items: start; }
+    .about-copy { color: var(--muted); font-size: 14px; }
+    .about-copy p:first-child { margin-top: 0; }
+    .about-copy strong { color: var(--ink); }
+    .principles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+    .principle { padding: 15px; border-left: 2px solid var(--gold); background: #f0eee6; }
+    .principle strong { display: block; margin-bottom: 4px; font: 17px var(--serif); }
+    .principle span { color: var(--muted); font-size: 11px; }
+    footer { padding: 25px 0; border-top: 1px solid var(--line); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; color: #78817e; font-size: 11px; }
+    .footer-inner a { color: var(--accent); text-decoration: none; }
+    .footer-brand { color: var(--ink); font: 18px var(--serif); }
+    :focus-visible { outline: 3px solid #d4a64f; outline-offset: 3px; }
+    @media (max-width: 850px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 20px; }
+      .hero { padding-top: 60px; }
+      .visual { min-height: 340px; }
+      .card-grid { grid-template-columns: repeat(2, 1fr); }
+      .about-grid { gap: 35px; }
+      .nav-links { gap: 17px; }
+    }
+    @media (max-width: 620px) {
+      .nav-wrap { width: min(100% - 28px, 1160px); min-height: 68px; }
+      .container { width: min(100% - 28px, 1160px); }
+      .menu-toggle { display: block; }
+      .nav-links { display: none; position: absolute; top: 67px; left: 0; right: 0; padding: 18px 22px 22px; flex-direction: column; align-items: stretch; gap: 0; background: var(--paper); border-bottom: 1px solid var(--line); }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 12px 0; }
+      .nav-links .nav-cta { margin-top: 8px; padding: 10px 13px; text-align: center; }
+      h1 { letter-spacing: -2px; }
+      .hero { padding: 48px 0 35px; }
+      .visual { min-height: 310px; }
+      .visual::before { width: 280px; height: 280px; }
+      .visual::after { width: 225px; height: 225px; }
+      .algorithm-paper { max-width: 320px; padding: 20px; }
+      .label-one { right: -1px; }
+      .label-two { left: -1px; }
+      .stats { gap: 10px; }
+      .stat { padding: 0 10px; }
+      .stat strong { font-size: 17px; }
+      .stat span { font-size: 10px; }
+      .algorithms, .about { padding: 55px 0; }
+      .section-heading { display: block; }
+      .section-intro { margin-top: 13px; }
+      .toolbar { align-items: stretch; }
+      .search-wrap, .search { width: 100%; }
+      .card-grid { grid-template-columns: 1fr; }
+      .algo-card { min-height: 225px; }
+      .quote-inner { grid-template-columns: 32px 1fr; gap: 12px; }
+      .quote-mark { font-size: 55px; }
+      blockquote { font-size: 19px; }
+      .quote-stamp { display: none; }
+      .about-grid { grid-template-columns: 1fr; gap: 22px; }
+      .principles { gap: 9px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; gap: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="index.html" aria-label="Note G home">
+        <span class="brand-mark" aria-hidden="true">G</span>
+        <span><span class="brand-name">Note G</span><span class="brand-sub">Algorithms in motion</span></span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+      <nav class="nav-links" id="primary-nav" aria-label="Main navigation">
+        <a href="#home">Home</a>
+        <a href="#algorithms">Algorithms</a>
+        <a href="#approach">Our approach</a>
+        <a class="nav-cta" href="https://github.com/" target="_blank" rel="noreferrer">View on GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">A notebook for curious minds</span>
+          <h1>Algorithms,<br><em>made visible.</em></h1>
+          <p class="hero-copy">Step inside the ideas that power computing. Explore algorithms through interactive demonstrations that turn abstract logic into something you can see, test, and understand.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#algorithms">Explore algorithms <span aria-hidden="true">→</span></a>
+            <a class="button button-secondary" href="#approach">Why Note G?</a>
+          </div>
+          <p class="hero-note"><strong>Learn by experimenting.</strong> No black boxes. Just ideas, step by step.</p>
+        </div>
+        <div class="visual" aria-label="Illustration of an algorithm sorting a set of bars">
+          <div class="floating-label label-one"><span class="label-dot"></span>Observe the pattern</div>
+          <div class="algorithm-paper">
+            <div class="paper-top"><span>Notebook / 001</span><span>Fig. A</span></div>
+            <div class="paper-title">Sorting, in progress</div>
+            <div class="paper-subtitle">A small change in order. A big idea.</div>
+            <div class="bars" aria-hidden="true">
+              <span class="bar" style="height:35%"></span><span class="bar" style="height:73%"></span><span class="bar" style="height:49%"></span><span class="bar" style="height:88%"></span><span class="bar" style="height:61%"></span><span class="bar" style="height:42%"></span><span class="bar" style="height:96%"></span><span class="bar" style="height:56%"></span>
+            </div>
+            <div class="paper-code"><span>compare(i, j)</span><span>→ reorder()</span></div>
+          </div>
+          <div class="floating-label label-two">01 &nbsp; <span style="color:var(--accent)">Understand</span> · 02 Experiment · 03 Discover</div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="stats" aria-label="Site principles">
+          <div class="stat"><strong>Visual first</strong><span>See each step as it happens</span></div>
+          <div class="stat"><strong>Play with the inputs</strong><span>Change the data, explore the result</span></div>
+          <div class="stat"><strong>Understand the why</strong><span>Build intuition, not just answers</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="algorithms" id="algorithms">
+      <div class="container">
+        <div class="section-heading">
+          <div><div class="section-kicker">The collection</div><h2>Choose an idea to explore.</h2></div>
+          <p class="section-intro">From sorting a list to finding a path through a maze, each demo is an invitation to experiment.</p>
+        </div>
+        <div class="toolbar">
+          <div class="filters" role="group" aria-label="Filter algorithms">
+            <button class="filter" type="button" data-filter="all" aria-pressed="true">All demos</button>
+            <button class="filter" type="button" data-filter="sorting" aria-pressed="false">Sorting</button>
+            <button class="filter" type="button" data-filter="search" aria-pressed="false">Searching</button>
+            <button class="filter" type="button" data-filter="graphs" aria-pressed="false">Graphs & paths</button>
+          </div>
+          <label class="search-wrap"><span aria-hidden="true">⌕</span><input class="search" id="algorithm-search" type="search" placeholder="Find an algorithm…" aria-label="Search algorithms"></label>
+        </div>
+        <div class="card-grid" id="algorithm-grid">
+          <article class="algo-card" data-category="sorting" data-search="merge sort divide conquer sorting stable">
+            <div class="card-top"><div class="algo-icon" aria-hidden="true">↔</div><span class="tag">Sorting</span></div>
+            <h3>Merge Sort</h3>
+            <p>Split a list, sort each half, and merge the results. Watch divide and conquer turn a big problem into smaller ones.</p>
+            <a class="card-link" href="algorithms/merge-sort.html">Open demonstration <span aria-hidden="true">→</span></a>
+          </article>
+          <article class="algo-card" data-category="search" data-search="binary search sorted array halve search">
+            <div class="card-top"><div class="algo-icon" aria-hidden="true">⌕</div><span class="tag">Searching</span></div>
+            <h3>Binary Search</h3>
+            <p>Find a target by repeatedly cutting the search space in half. See why sorted data makes this strategy so efficient.</p>
+            <a class="card-link" href="algorithms/binary-search.html">Open demonstration <span aria-hidden="true">→</span></a>
+          </article>
+          <article class="algo-card" data-category="graphs" data-search="a star a* pathfinding graph heuristic shortest path maze">
+            <div class="card-top"><div class="algo-icon" aria-hidden="true">⌁</div><span class="tag">Graphs & paths</span></div>
+            <h3>A* Pathfinding</h3>
+            <p>Guide a search through a grid using both distance traveled and a goal-directed estimate. Can you find the best route?</p>
+            <a class="card-link" href="algorithms/a-star.html">Open demonstration <span aria-hidden="true">→</span></a>
+          </article>
+          <article class="algo-card" data-category="graphs" data-search="breadth first search bfs graph traversal queue">
+            <div class="card-top"><div class="algo-icon" aria-hidden="true">◎</div><span class="tag">Graphs & paths</span></div>
+            <h3>Breadth-First Search</h3>
+            <p>Explore a graph layer by layer. Follow the queue and see how the traversal discovers nearby nodes first.</p>
+            <a class="card-link" href="algorithms/breadth-first-search.html">Open demonstration <span aria-hidden="true">→</span></a>
+          </article>
+          <article class="algo-card" data-category="graphs" data-search="depth first search dfs graph traversal stack recursion">
+            <div class="card-top"><div class="algo-icon" aria-hidden="true">⌘</div><span class="tag">Graphs & paths</span></div>
+            <h3>Depth-First Search</h3>
+            <p>Follow one branch as far as it goes before backtracking. Compare the journey with breadth-first search.</p>
+            <a class="card-link" href="algorithms/depth-first-search.html">Open demonstration <span aria-hidden="true">→</span></a>
+          </article>
+          <article class="algo-card" data-category="sorting" data-search="insertion sort sorting cards incremental order">
+            <div class="card-top"><div class="algo-icon" aria-hidden="true">⋮</div><span class="tag">Sorting</span></div>
+            <h3>Insertion Sort</h3>
+            <p>Build a sorted sequence one item at a time, like arranging cards in your hand. Simple, tangible, and instructive.</p>
+            <a class="card-link" href="algorithms/insertion-sort.html">Open demonstration <span aria-hidden="true">→</span></a>
+          </article>
+        </div>
+        <div class="empty-state" id="empty-state" role="status">No algorithms match that search. Try another term or choose a different category.</div>
+      </div>
+    </section>
+
+    <section class="quote-band" aria-label="Inspiration">
+      <div class="container quote-inner">
+        <div class="quote-mark" aria-hidden="true">“</div>
+        <div>
+          <blockquote>The Analytical Engine weaves algebraical patterns just as the Jacquard loom weaves flowers and leaves.</blockquote>
+          <div class="quote-caption">Ada Lovelace · Notes on the Analytical Engine, Note A</div>
+        </div>
+        <div class="quote-stamp" aria-hidden="true">IDEAS<br>INTO<br>INSIGHT</div>
+      </div>
+    </section>
+
+    <section class="about" id="approach">
+      <div class="container about-grid">
+        <div><div class="section-kicker">Why Note G?</div><h2>A name with a history.</h2></div>
+        <div class="about-copy">
+          <p><strong>Note G</strong> nods to Ada Lovelace’s 1843 notes on Charles Babbage’s proposed Analytical Engine. In Note G, she published what is widely recognized as the first published algorithm intended for a machine: a method for calculating Bernoulli numbers.</p>
+          <p>Her work pointed toward a bigger idea: a computing machine could follow symbolic instructions and do more than arithmetic alone. This project carries that spirit forward by making the logic of algorithms visible, approachable, and fun to explore.</p>
+          <div class="principles">
+            <div class="principle"><strong>Curiosity first</strong><span>Ask a question, change a value, see what happens.</span></div>
+            <div class="principle"><strong>Clarity over cleverness</strong><span>Make each step understandable and meaningful.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span class="footer-brand">Note G</span>
+      <span>Made for people who like to understand how things work.</span>
+      <a href="#home">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const filterButtons = [...document.querySelectorAll('[data-filter]')];
+      const cards = [...document.querySelectorAll('.algo-card')];
+      const searchInput = document.getElementById('algorithm-search');
+      const emptyState = document.getElementById('empty-state');
+      const menuToggle = document.querySelector('.menu-toggle');
+      const nav = document.getElementById('primary-nav');
+      let activeFilter = 'all';
+
+      function updateCards() {
+        const term = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+        cards.forEach(card => {
+          const matchesCategory = activeFilter === 'all' || card.dataset.category === activeFilter;
+          const matchesSearch = !term || (card.dataset.search + ' ' + card.innerText).toLowerCase().includes(term);
+          const visible = matchesCategory && matchesSearch;
+          card.hidden = !visible;
+          if (visible) visibleCount++;
+        });
+        emptyState.style.display = visibleCount ? 'none' : 'block';
+      }
+
+      filterButtons.forEach(button => button.addEventListener('click', () => {
+        activeFilter = button.dataset.filter;
+        filterButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        updateCards();
+      }));
+      searchInput.addEventListener('input', updateCards);
+      menuToggle.addEventListener('click', () => {
+        const isOpen = nav.classList.toggle('open');
+        menuToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+      nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+        nav.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }));
+    })();
+  </script>
+</body>
+</html>
